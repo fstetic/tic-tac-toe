@@ -1,15 +1,25 @@
 import tkinter as tk
 import tkinter.font as tkfont
 import board
+import random
 
-def play(window, symbol):
+def play(window, symbol, first):
 	window.choose_window.destroy()
 	if symbol=='o':
 		for i in range(9):
-			window.fields[i].bind('<ButtonPress>', lambda event=i, arg=window: draw(event, 'o', arg))
+			window.fields[i].bind('<ButtonPress>', lambda event, arg=window: draw(event, 'o', arg))
+			window.fields[i].bind('<ButtonRelease>', lambda event, arg=window: opponent_move(event, 'x', arg))
+		if not first:
+			window.fields[0].event_generate('<ButtonRelease>')
+			window.fields[0].bind('<ButtonRelease>', lambda event, arg=window: opponent_move(event, 'x', arg))
 	else:
 		for i in range(9):
-			window.fields[i].bind('<ButtonPress>', lambda event=i, arg=window: draw(event, 'x', arg))
+			window.fields[i].bind('<ButtonPress>', lambda event, arg=window: draw(event, 'x', arg))
+			window.fields[i].bind('<ButtonRelease>', lambda event, arg=window: opponent_move(event, 'o', arg))
+		if not first:
+			window.fields[0].event_generate('<ButtonRelease>')
+			window.fields[0].bind('<ButtonRelease>', lambda event, arg=window: opponent_move(event, 'o', arg))
+
 
 
 def draw(event, symbol, window):
@@ -25,7 +35,11 @@ def draw(event, symbol, window):
 		event.widget.symbol = 'x'
 	event.widget.unbind('<ButtonPress>')
 	win_symbol, win_fields, command = check_end_move(window)
-	end(window, win_fields, win_symbol, width, height, center_x, center_y, command)
+	if command != "continue":
+		for canvas in window.fields:
+			canvas.unbind("<ButtonPress>")
+			canvas.unbind("<ButtonRelease>")
+		end(window, win_fields, win_symbol, width, height, center_x, center_y, command)
 
 
 def check_end_move(window):
@@ -54,9 +68,7 @@ def check_end_move(window):
 
 def end(window, win_fields, symbol, x, y, center_x, center_y, command):
 	label_text = tk.StringVar()
-	if command == "continue":
-		return
-	elif command == "tie":
+	if command == "tie":
 		label_text.set("It's a tie!")
 	else:
 		label_text.set("{} wins!".format(symbol.upper()))
@@ -85,15 +97,30 @@ def call_end_window(window, text):
 	for i in range(2):
 		win_window.grid_rowconfigure(i, weight=1)
 		win_window.grid_columnconfigure(i, weight=1)
-	tk.Label(win_window, bg="white", fg="LightSteelBlue4", textvariable=text,
+	tk.Label(win_window, bg="white", fg="black", textvariable=text,
 	         font=tkfont.Font(family="likhan", size=25, weight='bold')).grid(row=0, column=0, columnspan=2)
 	tk.Button(win_window, text="Play again", bg="white", fg="black", command=lambda arg=window:play_again(arg)).grid(row=1,column=0)
 	tk.Button(win_window, text="Exit", bg="white", fg="black", command=exit).grid(row=1,column=1)
 	win_window.protocol('WM_DELETE_WINDOW', exit)
 
+
 def play_again(window):
 	window.root.destroy()
 	main()
+
+
+def opponent_move(event, symbol, window):
+	event.widget.unbind('<ButtonRelease>')
+	if None not in [window.fields[i].symbol for i in range(9)]:
+		return
+	rand = random.randrange(9)
+	while window.fields[rand].symbol is not None:
+		rand = random.randrange(9)
+	fake_event = tk.Event()
+	fake_event.widget = window.fields[rand]
+	window.fields[rand].unbind('<ButtonRelease>')
+	draw(fake_event, symbol, window)
+
 
 def main():
 	root = tk.Tk()
