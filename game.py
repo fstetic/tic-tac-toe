@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.font as tkfont
+import board
 
 def play(window, symbol):
 	window.choose_window.destroy()
@@ -73,6 +74,7 @@ def end(window, win_fields, symbol, x, y, center_x, center_y, command):
 				window.fields[field].create_line(0, y, x, 0, width=4)
 	call_end_window(window, label_text)
 
+
 def call_end_window(window, text):
 	win_window = tk.Toplevel(window, bg="white")
 	win_window.title("Game end")
@@ -85,5 +87,22 @@ def call_end_window(window, text):
 		win_window.grid_columnconfigure(i, weight=1)
 	tk.Label(win_window, bg="white", fg="LightSteelBlue4", textvariable=text,
 	         font=tkfont.Font(family="likhan", size=25, weight='bold')).grid(row=0, column=0, columnspan=2)
-	tk.Button(win_window, text="Play again", bg="white", fg="black").grid(row=1,column=0)
+	tk.Button(win_window, text="Play again", bg="white", fg="black", command=lambda arg=window:play_again(arg)).grid(row=1,column=0)
 	tk.Button(win_window, text="Exit", bg="white", fg="black", command=exit).grid(row=1,column=1)
+	win_window.protocol('WM_DELETE_WINDOW', exit)
+
+def play_again(window):
+	window.root.destroy()
+	main()
+
+def main():
+	root = tk.Tk()
+	root.geometry("900x600")
+	root.grid_rowconfigure(0, weight=1)
+	root.grid_columnconfigure(0, weight=1)
+	window = board.Window(root)
+	window.mainloop()
+
+
+if __name__ == '__main__':
+	main()

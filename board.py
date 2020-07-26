@@ -26,6 +26,7 @@ class Window(tk.Frame):
 	def choose_symbol(self):
 		self.choose_window.geometry("500x250+{}+{}".format(int(self.winfo_width()/3), int(self.winfo_height()/3)))
 		self.choose_window.attributes('-topmost', 'true')
+		self.choose_window.protocol('WM_DELETE_WINDOW', exit)
 		self.choose_window.grid()
 		tk.Label(self.choose_window, bg="white", fg="LightSteelBlue4", text="Choose which symbol you want to use: ",
 		         font=tkfont.Font(family="likhan", size=25, weight='bold')).grid(row=0, column=0, columnspan=2)
@@ -35,11 +36,3 @@ class Window(tk.Frame):
 		self.o_button.grid(row=1, column=0)
 		self.x_button.grid(row=1, column=1)
 		self.o_button.image, self.x_button.image = o_image, x_image   # saving reference so the image doesn't get cleared by the garbage-collector
-
-if __name__ == '__main__':
-	root = tk.Tk()
-	root.geometry("900x600")
-	root.grid_rowconfigure(0, weight=1)
-	root.grid_columnconfigure(0, weight=1)
-	window = Window(root)
-	window.mainloop()
