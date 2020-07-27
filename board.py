@@ -24,7 +24,7 @@ class Window(tk.Frame):
 		self.choose_symbol()
 
 	def choose_symbol(self):
-		self.choose_window.geometry("500x350+{}+{}".format(int(self.winfo_width()/3), int(self.winfo_height()/3)))
+		self.choose_window.geometry("500x350+{}+{}".format(int(self.winfo_rootx()+250), int(self.winfo_rooty()+150)))
 		self.choose_window.attributes('-topmost', 'true')
 		self.choose_window.protocol('WM_DELETE_WINDOW', exit)
 		self.choose_window.grid()

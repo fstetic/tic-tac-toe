@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkfont
 import board
-import random
+import minimax
 
 def play(window, symbol, first):
 	window.choose_window.destroy()
@@ -34,7 +34,7 @@ def draw(event, symbol, window):
 		event.widget.create_line(center_x-r+10, center_y+r-10, center_x+r-10, center_y-r+10, width=4)   # /
 		event.widget.symbol = 'x'
 	event.widget.unbind('<ButtonPress>')
-	win_symbol, win_fields, command = check_end_move(window)
+	win_symbol, win_fields, command = check_end_move([window.fields[i].symbol for i in range(9)])
 	if command != "continue":
 		for canvas in window.fields:
 			canvas.unbind("<ButtonPress>")
@@ -42,26 +42,26 @@ def draw(event, symbol, window):
 		end(window, win_fields, win_symbol, width, height, center_x, center_y, command)
 
 
-def check_end_move(window):
+def check_end_move(symbols):
 	# rows
 	for i in range(0,7,3):
-		symbol = {window.fields[i].symbol, window.fields[i+1].symbol, window.fields[i+2].symbol}
-		if len(symbol) == 1 and None not in symbol:
-			return window.fields[i].symbol, [i, i+1, i+2], "row"
+		win_symbol = {symbols[i], symbols[i+1], symbols[i+2]}
+		if len(win_symbol) == 1 and None not in win_symbol:
+			return win_symbol.pop(), [i, i+1, i+2], "row"
 	# columns
 	for i in range(0,3):
-		symbol = {window.fields[i].symbol, window.fields[i + 3].symbol, window.fields[i + 6].symbol}
-		if len(symbol) == 1 and None not in symbol:
-			return window.fields[i].symbol, [i, i+3, i+6], "column"
+		win_symbol = {symbols[i], symbols[i+3], symbols[i+6]}
+		if len(win_symbol) == 1 and None not in win_symbol:
+			return win_symbol.pop(), [i, i+3, i+6], "column"
 	# diagonals
-	symbol = {window.fields[0].symbol, window.fields[4].symbol, window.fields[8].symbol}
-	if len(symbol) == 1 and None not in symbol:
-		return window.fields[0].symbol, [0,4,8], "diag left"
-	symbol = {window.fields[2].symbol, window.fields[4].symbol, window.fields[6].symbol}
-	if len(symbol) == 1 and None not in symbol:
-		return window.fields[2].symbol, [2,4,6], "diag right"
+	win_symbol = {symbols[0], symbols[4], symbols[8]}
+	if len(win_symbol) == 1 and None not in win_symbol:
+		return win_symbol.pop(), [0,4,8], "diag left"
+	win_symbol = {symbols[2], symbols[4], symbols[6]}
+	if len(win_symbol) == 1 and None not in win_symbol:
+		return win_symbol.pop(), [2,4,6], "diag right"
 	# tie
-	if None not in [window.fields[i].symbol for i in range(9)]:
+	if None not in [symbols[i] for i in range(9)]:
 		return None, [], "tie"
 	return None, [], "continue"
 
@@ -90,7 +90,7 @@ def end(window, win_fields, symbol, x, y, center_x, center_y, command):
 def call_end_window(window, text):
 	win_window = tk.Toplevel(window, bg="white")
 	win_window.title("Game end")
-	win_window.geometry("300x100+{}+{}".format(int(window.winfo_width() / 3), int(window.winfo_height() / 3)))
+	win_window.geometry("300x100+{}+{}".format(int(window.winfo_rootx()+300), int(window.winfo_rooty()+100)))
 	win_window.attributes('-topmost', 'true')
 	win_window.resizable(width=False, height=False)
 	win_window.grid()
@@ -111,20 +111,19 @@ def play_again(window):
 
 def opponent_move(event, symbol, window):
 	event.widget.unbind('<ButtonRelease>')
-	if None not in [window.fields[i].symbol for i in range(9)]:
+	current_layout = [window.fields[i].symbol for i in range(9)]
+	if None not in current_layout:
 		return
-	rand = random.randrange(9)
-	while window.fields[rand].symbol is not None:
-		rand = random.randrange(9)
+	index = minimax.get_next_move(current_layout, symbol)
 	fake_event = tk.Event()
-	fake_event.widget = window.fields[rand]
-	window.fields[rand].unbind('<ButtonRelease>')
+	fake_event.widget = window.fields[index]
+	window.fields[index].unbind('<ButtonRelease>')
 	draw(fake_event, symbol, window)
 
 
 def main():
 	root = tk.Tk()
-	root.geometry("900x600")
+	root.geometry("900x700+{}+{}".format(int(root.winfo_screenwidth()/2-450), int(root.winfo_screenheight()/2-350)))
 	root.grid_rowconfigure(0, weight=1)
 	root.grid_columnconfigure(0, weight=1)
 	icon = tk.PhotoImage(file = "icon.png")
