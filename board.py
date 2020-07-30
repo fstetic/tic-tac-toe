@@ -33,7 +33,7 @@ class Window(tk.Frame):
 		self.choose_window.rowconfigure(2, minsize=80)
 		tk.Label(self.choose_window, bg="white", fg="black", text="Choose which symbol you want to use: ",
 		         font=tkfont.Font(family="likhan", size=25, weight='bold')).grid(row=0, column=0, columnspan=2)
-		o_image, x_image = tk.PhotoImage(file = 'o.png'), tk.PhotoImage(file = 'x.png')
+		o_image, x_image = tk.PhotoImage(file ='visual/o.png'), tk.PhotoImage(file ='visual/x.png')
 		self.o_button.config(image = o_image, command=lambda arg=self: arg.choose_order('o'))
 		self.x_button.config(image = x_image, command=lambda arg=self: arg.choose_order('x'))
 		self.o_button.grid(row=1, column=0)

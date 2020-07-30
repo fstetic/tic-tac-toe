@@ -129,7 +129,7 @@ def main():
 	root.geometry("900x700+{}+{}".format(int(root.winfo_screenwidth()/2-450), int(root.winfo_screenheight()/2-350)))    # center window on screen
 	root.grid_rowconfigure(0, weight=1)
 	root.grid_columnconfigure(0, weight=1)
-	icon = tk.PhotoImage(file = "icon.png")
+	icon = tk.PhotoImage(file ="visual/icon.png")
 	root.iconphoto(True, icon)
 	window = board.Window(root)
 	window.mainloop()
