@@ -23,8 +23,9 @@ class Window(tk.Frame):
 		self.o_button, self.x_button = tk.Button(self.choose_window), tk.Button(self.choose_window)
 		self.choose_symbol()
 
+
 	def choose_symbol(self):
-		self.choose_window.geometry("500x350+{}+{}".format(int(self.winfo_rootx()+250), int(self.winfo_rooty()+150)))
+		self.choose_window.geometry("500x350+{}+{}".format(int(self.winfo_rootx()+250), int(self.winfo_rooty()+150)))   # center window considering TopLevel
 		self.choose_window.attributes('-topmost', 'true')
 		self.choose_window.protocol('WM_DELETE_WINDOW', exit)
 		self.choose_window.grid()
@@ -38,7 +39,8 @@ class Window(tk.Frame):
 		self.o_button.grid(row=1, column=0)
 		self.x_button.grid(row=1, column=1)
 		self.o_button.image, self.x_button.image = o_image, x_image   # saving reference so the image doesn't get cleared by the garbage-collector
-		
+
+
 	def choose_order(self, symbol):
 		tk.Label(self.choose_window, bg="white", fg="black", text="Do you want to go first?",
 		         font=tkfont.Font(family="likhan", size=25, weight='bold')).grid(row=2, column=0, columnspan=2)

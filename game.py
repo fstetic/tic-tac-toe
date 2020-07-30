@@ -3,21 +3,21 @@ import tkinter.font as tkfont
 import board
 import minimax
 
-def play(window, symbol, first):
+
+def play(window, symbol, player_first):
 	window.choose_window.destroy()
 	if symbol=='o':
-		for i in range(9):
-			window.fields[i].bind('<ButtonPress>', lambda event, arg=window: draw(event, 'o', arg))
-			window.fields[i].bind('<ButtonRelease>', lambda event, arg=window: ai_move(event, 'x', 'o', arg))
-		if not first:
+		for field in window.fields:
+			field.bind('<ButtonPress>', lambda event, arg=window: draw(event, 'o', arg))
+			field.bind('<ButtonRelease>', lambda event, arg=window: ai_move(event, 'x', 'o', arg))
+		if not player_first:
 			ai_move(tk.Event(), 'x', 'o', window, True)
 	else:
-		for i in range(9):
-			window.fields[i].bind('<ButtonPress>', lambda event, arg=window: draw(event, 'x', arg))
-			window.fields[i].bind('<ButtonRelease>', lambda event, arg=window: ai_move(event, 'o', 'x', arg))
-		if not first:
+		for field in window.fields:
+			field.bind('<ButtonPress>', lambda event, arg=window: draw(event, 'x', arg))
+			field.bind('<ButtonRelease>', lambda event, arg=window: ai_move(event, 'o', 'x', arg))
+		if not player_first:
 			ai_move(tk.Event(), 'o', 'x', window, True)
-
 
 
 def draw(event, symbol, window):
@@ -25,46 +25,50 @@ def draw(event, symbol, window):
 	center_x, center_y = int(width/2), int(height/2)
 	r = min(width-center_x, height-center_y)
 	if symbol=='o':
-		event.widget.create_oval(center_x-r+10,center_y-r+10, center_x+r-10, center_y+r-10, width=4)
+		event.widget.create_oval(center_x-r+10,center_y-r+10, center_x+r-10, center_y+r-10, width=4)    # O
 		event.widget.symbol = 'o'
 	else:
 		event.widget.create_line(center_x-r+10,center_y-r+10, center_x+r-10, center_y+r-10, width=4)    # \
 		event.widget.create_line(center_x-r+10, center_y+r-10, center_x+r-10, center_y-r+10, width=4)   # /
 		event.widget.symbol = 'x'
 	event.widget.unbind('<ButtonPress>')
-	win_symbol, win_fields, command = check_end_move([window.fields[i].symbol for i in range(9)])
+	win_symbol, win_fields, command = check_if_end_move([field.symbol for field in window.fields])
 	if command != "continue":
 		for canvas in window.fields:
 			canvas.unbind("<ButtonPress>")
 			canvas.unbind("<ButtonRelease>")
-		end(window, win_fields, win_symbol, width, height, center_x, center_y, command)
+		end_game(window, win_fields, win_symbol, width, height, center_x, center_y, command)
 
 
-def check_end_move(symbols):
+# takes a list which represents the board where 'x' is X, 'o' is O, and None is empty field
+# returns symbol which won, winning fields and string saying orientation of winning fields
+def check_if_end_move(layout):
 	# rows
 	for i in range(0,7,3):
-		win_symbol = {symbols[i], symbols[i+1], symbols[i+2]}
+		win_symbol = {layout[i], layout[i+1], layout[i+2]}
 		if len(win_symbol) == 1 and None not in win_symbol:
 			return win_symbol.pop(), [i, i+1, i+2], "row"
 	# columns
 	for i in range(0,3):
-		win_symbol = {symbols[i], symbols[i+3], symbols[i+6]}
+		win_symbol = {layout[i], layout[i+3], layout[i+6]}
 		if len(win_symbol) == 1 and None not in win_symbol:
 			return win_symbol.pop(), [i, i+3, i+6], "column"
 	# diagonals
-	win_symbol = {symbols[0], symbols[4], symbols[8]}
+	win_symbol = {layout[0], layout[4], layout[8]}
 	if len(win_symbol) == 1 and None not in win_symbol:
 		return win_symbol.pop(), [0,4,8], "diag left"
-	win_symbol = {symbols[2], symbols[4], symbols[6]}
+	win_symbol = {layout[2], layout[4], layout[6]}
 	if len(win_symbol) == 1 and None not in win_symbol:
 		return win_symbol.pop(), [2,4,6], "diag right"
 	# tie
-	if None not in [symbols[i] for i in range(9)]:
+	if None not in [layout[i] for i in range(9)]:
 		return None, [], "tie"
+	# not end
 	return None, [], "continue"
 
 
-def end(window, win_fields, symbol, x, y, center_x, center_y, command):
+# draws a line across winning fields
+def end_game(window, win_fields, symbol, x, y, center_x, center_y, command):
 	label_text = tk.StringVar()
 	if command == "tie":
 		label_text.set("It's a tie!")
@@ -88,7 +92,7 @@ def end(window, win_fields, symbol, x, y, center_x, center_y, command):
 def call_end_window(window, text):
 	win_window = tk.Toplevel(window, bg="white")
 	win_window.title("Game end")
-	win_window.geometry("300x100+{}+{}".format(int(window.winfo_rootx()+300), int(window.winfo_rooty()+100)))
+	win_window.geometry("300x100+{}+{}".format(int(window.winfo_rootx()+300), int(window.winfo_rooty()+100)))   # center the window considering TopLevel
 	win_window.attributes('-topmost', 'true')
 	win_window.resizable(width=False, height=False)
 	win_window.grid()
@@ -107,11 +111,11 @@ def play_again(window):
 	main()
 
 
-def ai_move(event, ai_symbol, player_symbol, window, first_move_ai=False):
-	if not first_move_ai:
+def ai_move(event, ai_symbol, player_symbol, window, ai_first=False):
+	if not ai_first:
 		event.widget.unbind('<ButtonRelease>')
-	current_layout = [window.fields[i].symbol for i in range(9)]
-	if None not in current_layout:
+	current_layout = [field.symbol for field in window.fields]
+	if None not in current_layout:      # if the player did the last move
 		return
 	index = minimax.get_next_move(current_layout, ai_symbol, player_symbol)
 	fake_event = tk.Event()
@@ -122,7 +126,7 @@ def ai_move(event, ai_symbol, player_symbol, window, first_move_ai=False):
 
 def main():
 	root = tk.Tk()
-	root.geometry("900x700+{}+{}".format(int(root.winfo_screenwidth()/2-450), int(root.winfo_screenheight()/2-350)))
+	root.geometry("900x700+{}+{}".format(int(root.winfo_screenwidth()/2-450), int(root.winfo_screenheight()/2-350)))    # center window on screen
 	root.grid_rowconfigure(0, weight=1)
 	root.grid_columnconfigure(0, weight=1)
 	icon = tk.PhotoImage(file = "icon.png")
