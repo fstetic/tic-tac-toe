@@ -8,17 +8,15 @@ def play(window, symbol, first):
 	if symbol=='o':
 		for i in range(9):
 			window.fields[i].bind('<ButtonPress>', lambda event, arg=window: draw(event, 'o', arg))
-			window.fields[i].bind('<ButtonRelease>', lambda event, arg=window: opponent_move(event, 'x', arg))
+			window.fields[i].bind('<ButtonRelease>', lambda event, arg=window: ai_move(event, 'x', 'o', arg))
 		if not first:
-			window.fields[0].event_generate('<ButtonRelease>')
-			window.fields[0].bind('<ButtonRelease>', lambda event, arg=window: opponent_move(event, 'x', arg))
+			ai_move(tk.Event(), 'x', 'o', window, True)
 	else:
 		for i in range(9):
 			window.fields[i].bind('<ButtonPress>', lambda event, arg=window: draw(event, 'x', arg))
-			window.fields[i].bind('<ButtonRelease>', lambda event, arg=window: opponent_move(event, 'o', arg))
+			window.fields[i].bind('<ButtonRelease>', lambda event, arg=window: ai_move(event, 'o', 'x', arg))
 		if not first:
-			window.fields[0].event_generate('<ButtonRelease>')
-			window.fields[0].bind('<ButtonRelease>', lambda event, arg=window: opponent_move(event, 'o', arg))
+			ai_move(tk.Event(), 'o', 'x', window, True)
 
 
 
@@ -109,16 +107,17 @@ def play_again(window):
 	main()
 
 
-def opponent_move(event, symbol, window):
-	event.widget.unbind('<ButtonRelease>')
+def ai_move(event, ai_symbol, player_symbol, window, first_move_ai=False):
+	if not first_move_ai:
+		event.widget.unbind('<ButtonRelease>')
 	current_layout = [window.fields[i].symbol for i in range(9)]
 	if None not in current_layout:
 		return
-	index = minimax.get_next_move(current_layout, symbol)
+	index = minimax.get_next_move(current_layout, ai_symbol, player_symbol)
 	fake_event = tk.Event()
 	fake_event.widget = window.fields[index]
 	window.fields[index].unbind('<ButtonRelease>')
-	draw(fake_event, symbol, window)
+	draw(fake_event, ai_symbol, window)
 
 
 def main():
