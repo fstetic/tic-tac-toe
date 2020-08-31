@@ -1,0 +1,28 @@
+body {
+    background-color: #2F2F2F;
+}
+button {
+    border: none;
+    background-color: white;
+    color: black;
+    padding: 64px 64px;
+    text-align: center;
+    font-size: 32px;
+    transition-duration: 0.4s;
+}
+button:hover {
+    background-color: #E0E0E0;
+    color: black;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px 0;
+    border-collapse: collapse;
+    border-style: hidden;
+}
+
+table td{
+    border: 2px solid;
+}
