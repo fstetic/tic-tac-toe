@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkfont
-import game
+from python import game
+
 
 class Window(tk.Frame):
 
@@ -33,7 +34,7 @@ class Window(tk.Frame):
 		self.choose_window.rowconfigure(2, minsize=80)
 		tk.Label(self.choose_window, bg="white", fg="black", text="Choose which symbol you want to use: ",
 		         font=tkfont.Font(family="likhan", size=25, weight='bold')).grid(row=0, column=0, columnspan=2)
-		o_image, x_image = tk.PhotoImage(file ='visual/o.png'), tk.PhotoImage(file ='visual/x.png')
+		o_image, x_image = tk.PhotoImage(file ='python/visual/o.png'), tk.PhotoImage(file ='python/visual/x.png')
 		self.o_button.config(image = o_image, command=lambda arg=self: arg.choose_order('o'))
 		self.x_button.config(image = x_image, command=lambda arg=self: arg.choose_order('x'))
 		self.o_button.grid(row=1, column=0)
@@ -45,6 +46,6 @@ class Window(tk.Frame):
 		tk.Label(self.choose_window, bg="white", fg="black", text="Do you want to go first?",
 		         font=tkfont.Font(family="likhan", size=25, weight='bold')).grid(row=2, column=0, columnspan=2)
 		tk.Button(self.choose_window, text="Yes", bg="white", fg="black", width=4, height=2,
-		          command=lambda arg=self: game.play(arg, symbol, True)).grid(row=3,column=0)
+		          command=lambda arg=self: game.play(arg, symbol, True)).grid(row=3, column=0)
 		tk.Button(self.choose_window, text="No", bg="white", fg="black", width=4, height=2,
 		          command=lambda arg=self: game.play(arg, symbol, False)).grid(row=3, column=1)
