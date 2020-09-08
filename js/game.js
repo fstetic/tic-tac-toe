@@ -1,12 +1,21 @@
-const express = require('express');
-const path = require('path')
-const app = new express();
+let playerSymbol, computerSymbol;
 
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
-app.set('views', path.join(__dirname));
+function addListeners(){
+	for (let i = 0; i < 9; i++) {
+		document.getElementById(i.toString()).addEventListener("click", displaySymbol)
+	}
+	document.getElementById("x_button").addEventListener("click", start)
+	document.getElementById("o_button").addEventListener("click", start)
+}
 
-app.get('/', function(req, res){
-    res.contentType('text/html')
-    res.render('template')
-}).listen(8080);
+function start(event) {
+	playerSymbol = event.target.textContent === 'X' ? 'X' : 'O';
+	computerSymbol = event.target.textContent === 'X' ? 'O' : 'X';
+	document.getElementById("x_button").hidden = true
+	document.getElementById("o_button").hidden = true
+}
+
+function displaySymbol(event) {
+	let button = event.target
+	button.textContent = playerSymbol
+}
