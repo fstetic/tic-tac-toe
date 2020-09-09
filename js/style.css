@@ -35,7 +35,7 @@ h1 {
     font-size: 64px;
     transition-duration: 0.4s;
 }
-.field:hover, .symbol_button:hover {
+.field:hover, .symbol_button:hover, #play_again:hover {
     background-color: #6495ED;
     color: black;
 }
@@ -43,11 +43,31 @@ h1 {
 .playing_field {
     margin-left: auto;
     margin-right: auto;
-    margin-top: 5%;
+    margin-top: 2%;
     border-collapse: collapse;
     border-style: hidden;
 }
 
 .playing_field td{
     border: 2px solid;
+}
+
+#end_game_text {
+    text-align:center;
+    margin-top:2%;
+    font-size: 32px;
+    color: #F0F8FF;
+}
+
+#play_again{
+    margin:auto;
+    display:block;
+    border:1px solid black;
+    background-color: #87CEFA;
+    height: 15mm;
+    width: 45mm;
+    padding: 2px 2px;
+    font-size: 24px;
+    cursor: pointer;
+    transition-duration: 0.4s;
 }
