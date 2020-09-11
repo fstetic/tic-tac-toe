@@ -1,0 +1,16 @@
+{
+  "name": "tic-tac-toe",
+  "version": "1.0.0",
+  "engines": {
+    "node": "14.9.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "jsdom": "^16.4.0",
+    "mocha-jsdom": "^2.0.0"
+  },
+  "devDependencies": {
+    "ejs": "^3.1.5",
+    "helmet": "^4.1.1"
+  }
+}
