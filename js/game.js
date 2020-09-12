@@ -173,3 +173,5 @@ function getAllMoves(boardState, symbol){
 	}
 	return result
 }
+
+document.onload = addListeners	// start script when the page loads
