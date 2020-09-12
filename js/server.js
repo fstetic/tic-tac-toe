@@ -10,7 +10,7 @@ app.set('view engine', 'html');
 app.set('views', path.join(__dirname));
 
 app.get('/', function(req, res){
+	res.header('Content-Security-Policy', "default-src 'self'")
 	res.contentType('text/html')
 	res.render('template')
-	res.header('Content-Security-Policy', "'default-src', 'none'")
 }).listen(process.env.PORT);

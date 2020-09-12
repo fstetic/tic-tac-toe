@@ -61,7 +61,7 @@ h1 {
 
 #play_again{
     margin:auto;
-    display:block;
+    display:none;
     border:1px solid black;
     background-color: #87CEFA;
     height: 15mm;
