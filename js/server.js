@@ -12,4 +12,5 @@ app.set('views', path.join(__dirname));
 app.get('/', function(req, res){
 	res.contentType('text/html')
 	res.render('template')
+	res.header('Content-Security-Policy', "'default-src', 'none'")
 }).listen(process.env.PORT);
